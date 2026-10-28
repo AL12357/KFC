@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useDispatch } from 'react-redux'
-import axios from 'axios'
-import { addcartcount } from '../redux/action'
+import { addcartcount, deleteCart } from '../redux/action'
 import styles from './cart.module.css'
+import MenuImage from '../menu_components/MenuImage'
+import { formatUGX, parsePrice } from '../utils/currency'
 
 const Cartproduct = ({
   id,
@@ -11,24 +12,15 @@ const Cartproduct = ({
   qty,
   title,
   desc,
-  fetchData
 }) => {
 
   const dispatch = useDispatch()
-  const [count, setCount] = useState(qty)
+  const count = Number(qty) || 0
 
-  // Works with both "200" and "₹200"
-  const acprice = Number(String(price).replace(/[^\d.]/g, ""))
+  const acprice = parsePrice(price)
 
   const handleRemove = () => {
-    axios
-      .delete(`http://localhost:8080/api/productcart/cart/${id}`)
-      .then(() => {
-        fetchData()
-      })
-      .catch((error) => {
-        console.error("Error deleting cart item:", error)
-      })
+    dispatch(deleteCart(id))
   }
 
   const handleMinus = () => {
@@ -39,48 +31,14 @@ const Cartproduct = ({
 
     const newQty = count - 1
 
-    const el = {
-      id,
-      image,
-      price,
-      title,
-      desc,
-      qty: newQty
-    }
-
-    axios
-      .put(`http://localhost:8080/api/productcart/cart/${id}`, el)
-      .then(() => {
-        setCount(newQty)
-        dispatch(addcartcount(el))
-      })
-      .catch((error) => {
-        console.error("Error updating quantity:", error)
-      })
+    dispatch(addcartcount({ id, image, price, title, desc, qty: newQty }))
   }
 
   const handlePlus = () => {
 
     const newQty = count + 1
 
-    const el = {
-      id,
-      image,
-      price,
-      title,
-      desc,
-      qty: newQty
-    }
-
-    axios
-      .put(`http://localhost:8080/api/productcart/cart/${id}`, el)
-      .then(() => {
-        setCount(newQty)
-        dispatch(addcartcount(el))
-      })
-      .catch((error) => {
-        console.error("Error updating quantity:", error)
-      })
+    dispatch(addcartcount({ id, image, price, title, desc, qty: newQty }))
   }
 
   return (
@@ -88,10 +46,7 @@ const Cartproduct = ({
 
       <div className={styles.cartproductleft}>
 
-        <img
-          src={image}
-          alt="food"
-        />
+        <MenuImage image={image} title={title} alt={title} />
 
         <div>
 
@@ -101,12 +56,13 @@ const Cartproduct = ({
             <li>{desc}</li>
           </ul>
 
-          <h3
-            style={{ cursor: 'pointer' }}
+          <button
+            type="button"
+            className={styles.removeButton}
             onClick={handleRemove}
           >
             Remove
-          </h3>
+          </button>
 
         </div>
 
@@ -130,7 +86,7 @@ const Cartproduct = ({
         </button>
 
         <h3>
-          ₹{Math.round(acprice * count)}
+          {acprice === null ? 'Price unavailable' : formatUGX(acprice * count)}
         </h3>
 
       </div>

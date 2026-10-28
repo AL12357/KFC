@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -182,7 +183,7 @@ const Home = () => {
         <div className={styles.ctaPampletContainer}>
           <div className={styles.ctaPamplet}>
             <p>FINGER LICKIN' GOOD® IS NOW JUST A FEW CLICKS AWAY</p>
-            <button>Start Order</button>
+            <Link to="/menu">Start Order</Link>
           </div>
         </div>
 

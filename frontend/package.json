@@ -1,0 +1,11 @@
+{
+  "name": "kfc-frontend-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix kfc-app run dev",
+    "start": "npm --prefix kfc-app start",
+    "build": "npm --prefix kfc-app run build",
+    "test": "npm --prefix kfc-app test --"
+  }
+}

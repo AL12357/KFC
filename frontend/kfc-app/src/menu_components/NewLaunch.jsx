@@ -1,7 +1,7 @@
 
 import { addlaunch } from '../redux/action';
-import { getdata } from "../utils/getdata"
-import React, { useEffect } from 'react'
+import { getMenuItemsByType } from "../utils/menuCatalog"
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styles from "./item.module.css"
 import Item from './Item';
@@ -9,14 +9,13 @@ import Item from './Item';
 const NewLaunch = () => {
     const dispatch = useDispatch();
     const launch= useSelector((state)=>state.launch);
-    useEffect(()=>{
+    const fetchData = useCallback(async () => {
+        const payload = await getMenuItemsByType("launch");
+        dispatch(addlaunch(payload));
+    }, [dispatch]);
+    useEffect(() => {
         fetchData();
-    },[])
-    
-     const fetchData= async()=>{
-        let payload= await getdata("http://localhost:8080/api/product/menu?type=launch");
-         dispatch(addlaunch(payload));
-     }
+    }, [fetchData]);
 
   return (
     <div id="launch" >

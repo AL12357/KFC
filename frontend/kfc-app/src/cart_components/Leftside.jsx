@@ -1,30 +1,23 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { getCart } from "../redux/action";
-import { getdata } from "../utils/getdata";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import Cartproduct from './Cartproduct';
+import { Link } from 'react-router-dom';
 
 
 const Leftside = () => {
-    const dispatch = useDispatch()
     const cart= useSelector((state)=>state.cart);
-    
-    useEffect(()=>{
-      fetchdata()
-    },[cart])
-  
-    const fetchdata= async ()=>{
-     let payload= await getdata("http://localhost:8080/api/productcart/cart");
-     dispatch(getCart(payload));
-    }   
 
   return (
     <div>
-        {cart.map((el,index)=>{
-            return <Cartproduct key={index}  {...el} fetchData={fetchdata} />
-        })}
+        {cart.length ? cart.map((item) => (
+          <Cartproduct key={item.id} {...item} />
+        )) : (
+          <div className="empty_cart">
+            <h2>Your cart is empty</h2>
+            <p>Add something finger lickin' good to get started.</p>
+            <Link to="/menu">Browse the menu</Link>
+          </div>
+        )}
     </div>
   )
 }

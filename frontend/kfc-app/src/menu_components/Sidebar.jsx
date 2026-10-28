@@ -7,7 +7,7 @@ export const Sidebar= ()=>{
 
     return (
         <div className={styles.sidebox}>
-          <img src="https://online.kfc.co.in/static/media/Stripes_Small_OffersIcon.87fc6256.svg"></img>
+          <img src="https://online.kfc.co.in/static/media/Stripes_Small_OffersIcon.87fc6256.svg" alt="" />
           <h1>KFC MENU</h1>
           <h3 onClick={()=>{
             smoothScrollTo("chicken")

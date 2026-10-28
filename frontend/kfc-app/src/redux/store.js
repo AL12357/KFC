@@ -1,4 +1,4 @@
-import {combineReducers, legacy_createStore,applyMiddleware, compose} from "redux"
+import {legacy_createStore,applyMiddleware, compose} from "redux"
 import thunk from "redux-thunk"
 import { reducer } from "./reducer";
 
@@ -15,4 +15,12 @@ const composeEnhancers =
       );
 
 
-   export const store = legacy_createStore(reducer,enhancer)   
+   export const store = legacy_createStore(reducer,enhancer)
+
+   store.subscribe(() => {
+     try {
+       localStorage.setItem("kfc-cart", JSON.stringify(store.getState().cart));
+     } catch (error) {
+       console.error("Unable to save the cart in this browser:", error);
+     }
+   });

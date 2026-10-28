@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import redLine from "../../assets/svg/redLine.svg"
 import styled from 'styled-components'
 import search from "../../assets/svg/search.svg"
@@ -76,7 +76,7 @@ const FindSearchPartStyled = styled.div`
     height:45vh;
     overflow:scroll;
     margin:10px;
-    
+
 }
 /* Hide scrollbar for Chrome, Safari and Opera */
 .restaurantCard::-webkit-scrollbar {
@@ -102,7 +102,7 @@ const FindSearchPartStyled = styled.div`
     height:45vh;
     overflow:none;
     margin:10px;
-    
+
 }
 /* Hide scrollbar for Chrome, Safari and Opera */
 .findMapSearch::-webkit-scrollbar {
@@ -139,7 +139,7 @@ const FindSearchPartStyled = styled.div`
 }
 
 @media all and (min-width:760px) and (max-width:1100px) {
-    
+
 .inputSearchForLocation{
     width: 70%;
     height:fit-content;
@@ -199,25 +199,28 @@ ${'' /* toggle nav querry */}
 `
 const FindKFC = () => {
     const [textL, setTextL] = useState("Pune")
-    const [location, setLocation] = useState([])
     const [address, setAddress] = useState("")
 
     //Geological Location Code for co-ordinates
     const out = (lat, lng) => {
         fetch(`https://us1.locationiq.com/v1/reverse.php?key=pk.456518217705258731c8c7089e3a45d0&lat=${lat}&lon=${lng}&format=json`)
             .then((e) => e.json())
-            .then((d) => (
-                setAddress(d.display_name),
-                setTextL(d)
-                // ,
-                // console.log(address)
-            ))
+            .then((d) => {
+                setAddress(d.display_name);
+                setTextL(d.display_name)
+            })
     }
     // setTimeout(()=>{
 
     // },1000)
-    const handleLocation = (el) => ( setTextL(el),setAddress(el) );
-    const findLocat =(event) => { event.preventDefault()};
+    const handleLocation = (el) => {
+        setTextL(el);
+        setAddress(el);
+    };
+    const findLocat = (event) => {
+        event.preventDefault();
+        handleLocation(textL);
+    };
     const UseMyGeoLocation = () => { navigator.geolocation.getCurrentPosition(function (position) { out(position.coords.latitude, position.coords.longitude) }) };
 
     return (
@@ -230,7 +233,9 @@ const FindKFC = () => {
                     <div className='inputSearchForLocationDiv'>
                         <form onSubmit={findLocat} style={{display:"flex"}} >
                             <input className='inputSearchForLocation' type="text" placeholder="Louisville, KY" onChange={(e) => handleLocation(e.target.value)} />
-                            <img className='inputSearchForLocationImg1' style={{ padding: "0vw 1vw", cursor: "pointer" }} src={search} onClick={()=>handleLocation} alt="" />
+                            <button type="submit" className='inputSearchForLocationImg1' aria-label="Search locations" style={{ padding: "0vw 1vw", cursor: "pointer", border: 0, background: "transparent" }}>
+                                <img src={search} alt="" />
+                            </button>
                             <img className='inputSearchForLocationImg2' style={{ padding: "0vw 1vw", cursor: "pointer" }} src={setting} alt="" />
                         </form>
                     </div>
@@ -242,8 +247,8 @@ const FindKFC = () => {
                         {address ? (
                             <>
                             <div className="browseOurDirectoryAddres"><b>Current Location:</b> {address}</div>
-                            <div className='restaurantCard'>                                
-                                {   
+                            <div className='restaurantCard'>
+                                {
                                     data.restaurantDetails.map((e)=><RestaurantCard key={e.contact} {...e}/>)
                                 }
                             </div>
@@ -262,7 +267,7 @@ const FindKFC = () => {
                         loading="lazy"
                         allowFullScreen
                         referrerPolicy="no-referrer-when-downgrade"
-                        src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyAq15HbfCRMW7RqNb5LUNyOLyfzpYI0wl4&q=${textL}`}>
+                        src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyAq15HbfCRMW7RqNb5LUNyOLyfzpYI0wl4&q=${encodeURIComponent(textL)}`}>
 
                     </iframe>
 

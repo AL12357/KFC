@@ -10,7 +10,43 @@
     margin-top: 10px;
     color:white;
     padding: 0px 20px ;
-    
+
+}
+.cartbutton > h3{
+    margin: 0;
+}
+.addto{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 0;
+    background: transparent;
+    color: white;
+    font: inherit;
+    cursor: pointer;
+}
+.cartIconButton{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: white;
+    color: #e4002b;
+    font-size: 20px;
+    cursor: pointer;
+}
+.cartIconButton:focus-visible,
+.addto:focus-visible,
+.plus:focus-visible,
+.minus:focus-visible{
+    outline: 2px solid #202124;
+    outline-offset: 2px;
 }
 .innerbox{
     margin-bottom: 20px;
@@ -68,11 +104,11 @@
     height:60px;
     font-size: 14px;
     width: 80%;
-    
+
 }
 .title{
     height: 40px;
-  
+
 }
 
 .searchbox>input{
@@ -95,7 +131,7 @@
     gap:40px;
     width: 85%;
     margin: auto;
-    
+
 }
 
 
@@ -143,7 +179,7 @@
         gap:12px;
         box-shadow: 0 4px 9px rgb(0 0 0 / 15%);
         background-color: aliceblue;
-      
+
         box-sizing: border-box;
         width: 100%;
         font-size: 10px;
@@ -161,13 +197,13 @@
         width: 100%;
         /* gap:200px; */
     }
-    
+
    .innerbox>img{
     height: 100%;
     width: 100%;
    }
    .cartbutton{
-     width: max-content; 
+     width: max-content;
    }
 
    .recombox>div>p{
@@ -184,7 +220,7 @@
         margin-top: 80px;
         font-size: 15px;
     }
-    
+
     .singledesc{
         font-size: 20px;
         text-align: justify;
@@ -198,7 +234,7 @@
     .recombox>div>p{
         display: 5px;
         font-size: 7px;
-        
+
         }
         .recombox>div>h3{
             font-size: 13px;
@@ -210,4 +246,4 @@
         display: grid;
         grid-template-columns: auto auto;
     }
-} 
+}

@@ -99,7 +99,8 @@ userAuthRouter.post("/logout", async (req, res) => {
       res.status(400).json({ error: "invalid token" });
     }
   } catch (err) {
-    console.log(err);
+    console.error("Logout failed:", err);
+    return res.status(500).json({ error: "Unable to log out" });
   }
 });
 

@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom'
 import SingleItem from '../menu_components/SingleItem';
+import { getFallbackMenuItem } from '../utils/menuCatalog';
 
 
 const SingleProduct = () => {
@@ -25,13 +26,18 @@ const SingleProduct = () => {
         })
         .catch((requestError) => {
           if (!axios.isCancel(requestError)) {
-            setError("Unable to load this menu item. Please try again.");
+            const fallbackItem = getFallbackMenuItem(id);
+            if (fallbackItem) {
+              setSingle(fallbackItem);
+            } else {
+              setError("Unable to load this menu item. Please try again.");
+            }
           }
         });
 
       return () => controller.abort();
     }, [id]);
-    
+
   return (
     <div style={{marginTop:"70px",marginBottom:"70px"}} >
        {error ? <p role="alert">{error}</p> : single ? <SingleItem {...single}/> : <p>Loading menu item...</p>}

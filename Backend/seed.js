@@ -7,63 +7,77 @@ const MONGO_URI = process.env.DATABASE;
 
 const menuItems = [
   {
-    image: "https://tb-static.uber.com/prod/image-proc/processed_images/e564c535342573d14f50aeda86b4dfed/c73ecc27d2a9eaa735b1ee95304ba588.jpeg",
+    image: "/food/fried-chicken.jpg",
     title: "KFC Chicken Bucket",
     desc: "Crispy fried chicken bucket",
     price: "1200",
     type: "chicken"
   },
   {
-    image: "https://d1ralsognjng37.cloudfront.net/2a74c64c-c473-4abb-a263-1051f38e503e.jpeg",
+    image: "/food/chicken-sandwich.jpg",
     title: "Chicken Burger",
     desc: "Crispy chicken burger",
     price: "600",
     type: "chicken"
   },
   {
-    image: "https://tb-static.uber.com/prod/image-proc/processed_images/e564c535342573d14f50aeda86b4dfed/c73ecc27d2a9eaa735b1ee95304ba588.jpeg",
+    image: "/food/chicken-roll.png",
+    title: "Chicken Roll",
+    desc: "Seasoned chicken wrapped with fresh ingredients",
+    price: "450",
+    type: "rolls"
+  },
+  {
+    image: "/food/biryani-bucket.png",
+    title: "Chicken Biryani Bucket",
+    desc: "Chicken and fragrant spiced rice",
+    price: "900",
+    type: "biryani"
+  },
+  {
+    image: "/food/chicken-sandwich.jpg",
     title: "Zinger Burger",
     desc: "Crispy chicken fillet burger",
     price: "650",
-    type: "burgers"
+    type: "burger"
   },
   {
-    image: "https://d1ralsognjng37.cloudfront.net/2a74c64c-c473-4abb-a263-1051f38e503e.jpeg",
+    image: "/food/chicken-sandwich.jpg",
     title: "Chicken Burger",
     desc: "Delicious crispy chicken burger",
     price: "600",
-    type: "burgers"
+    type: "burger"
   },
   {
-    image: "https://d1ralsognjng37.cloudfront.net/2a74c64c-c473-4abb-a263-1051f38e503e.jpeg",
+    image: "/food/fries.jpg",
     title: "French Fries",
     desc: "Crispy golden fries",
     price: "300",
-    type: "sides"
+    type: "snacks"
   },
   {
-    image: "https://d1ralsognjng37.cloudfront.net/2a74c64c-c473-4abb-a263-1051f38e503e.jpeg",
+    image: "/food/fries.jpg",
     title: "Coleslaw",
     desc: "Fresh creamy coleslaw",
     price: "250",
-    type: "sides"
+    type: "snacks"
   },
   {
-    image: "https://d1ralsognjng37.cloudfront.net/2a74c64c-c473-4abb-a263-1051f38e503e.jpeg",
+    image: "/food/cola.jpg",
     title: "Pepsi",
     desc: "Refreshing Pepsi",
     price: "200",
     type: "beverages"
   },
   {
-    image: "https://d1ralsognjng37.cloudfront.net/2a74c64c-c473-4abb-a263-1051f38e503e.jpeg",
+    image: "/food/cola.jpg",
     title: "7UP",
     desc: "Refreshing 7UP",
     price: "200",
     type: "beverages"
   },
   {
-    image: "https://d1ralsognjng37.cloudfront.net/2a74c64c-c473-4abb-a263-1051f38e503e.jpeg",
+    image: "/food/cola.jpg",
     title: "Mirinda",
     desc: "Refreshing orange drink",
     price: "200",
@@ -81,13 +95,26 @@ async function seedDatabase() {
 
     console.log("MongoDB connected");
 
-    await Menu.deleteMany({});
+    await Menu.updateMany(
+      { type: "burgers" },
+      { $set: { type: "burger" } }
+    );
+    await Menu.updateMany(
+      { type: "sides" },
+      { $set: { type: "snacks" } }
+    );
 
-    console.log("Old menu data deleted");
+    await Menu.bulkWrite(
+      menuItems.map((item) => ({
+        updateOne: {
+          filter: { title: item.title, type: item.type },
+          update: { $set: item },
+          upsert: true
+        }
+      }))
+    );
 
-    await Menu.insertMany(menuItems);
-
-    console.log(`${menuItems.length} menu items inserted successfully`);
+    console.log(`${menuItems.length} menu items seeded or updated`);
 
     await mongoose.connection.close();
 

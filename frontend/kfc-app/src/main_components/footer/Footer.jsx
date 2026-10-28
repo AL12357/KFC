@@ -9,7 +9,7 @@ import footkfc from "../../assets/svg/footkfc.svg"
 const FooterStyled = styled.div`
  text-align: center;
 .footermaindiv{
-    
+
     background-color: rgb(32, 33, 36);
     width:100vw;
     height:fit-Content;
@@ -230,6 +230,24 @@ export const Footer = () => {
                         </div>
                         <div className='lastLinefoot'>
                             <p>Copyright © KFC Corporation 2022 All Rights Reserved</p>
+                            <div
+                                className="projectTeamCredits"
+                                style={{
+                                    textAlign: "center",
+                                    padding: "12px 8px",
+                                    lineHeight: "1.8"
+                                }}
+                            >
+                                <p style={{ fontWeight: "bold", margin: "0 0 4px" }}>
+                                    Project Team
+                                </p>
+                                <p style={{ margin: "0" }}>
+                                    Ainebyona Alban — S25D14/022
+                                </p>
+                                <p style={{ margin: "0" }}>
+                                    Mawejje Alesha — S25D14/012
+                                </p>
+                            </div>
                         </div>
                         <div style={{ display: "flex" }} className='lastLinefoot'>
                             <Link to={"https://www.instagram.com/_mad___boxer_/"}><img height={"30rem"} style={{ padding: "0.3vw 1vw" }} src={instagram} alt="" /></Link>
@@ -250,4 +268,3 @@ export const Footer = () => {
         </FooterStyled>
     )
 }
-

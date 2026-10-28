@@ -1,44 +1,99 @@
 import React from "react";
-import { useState } from "react";
+import { Link } from "react-router-dom";
 
-export const ContactInfo = () => {
+const ContactInfo = ({ customerInfo, onChange }) => {
   return (
-    <div className="delivery_info_container">
+    <section className="delivery_info_container">
       <div style={{ display: "flex" }}>
         <div style={{ width: "40%" }}>
           <h3>CONTACT INFORMATION</h3>
-          <button className="sign_button_ellipse">Sign In</button>
+          <Link className="sign_button_ellipse" to="/signin">
+            Sign In
+          </Link>
         </div>
-        <div style={{width: "60%"}}>
-          <form>
-            <TextInput label="First name*" />
-            <TextInput label="Last name*" />
-            <TextInput label="Email*" />
+
+        <div style={{ width: "60%" }}>
+          <form onSubmit={(event) => event.preventDefault()}>
+            <TextInput
+              id="customer-first-name"
+              name="firstName"
+              label="First name*"
+              value={customerInfo.firstName}
+              onChange={onChange}
+              required
+            />
+
+            <TextInput
+              id="customer-last-name"
+              name="lastName"
+              label="Last name*"
+              value={customerInfo.lastName}
+              onChange={onChange}
+              required
+            />
+
+            <TextInput
+              id="customer-email"
+              name="email"
+              type="email"
+              label="Email*"
+              value={customerInfo.email}
+              onChange={onChange}
+              required
+            />
+
+            <TextInput
+              id="customer-phone"
+              name="phone"
+              type="tel"
+              label="Phone number*"
+              value={customerInfo.phone}
+              onChange={onChange}
+              required
+            />
           </form>
+
           <div style={{ display: "flex", marginTop: "20px" }}>
-          <input  type="checkbox" />
-          <label style={{marginLeft: "10px"}} htmlFor="">
-            I want to know about the cool stuff at KFC on Email & SMS (I know I
-            can unsubscribe anytime).
-          </label>
+            <input id="marketing-opt-in" type="checkbox" />
+            <label style={{ marginLeft: "10px" }} htmlFor="marketing-opt-in">
+              I want to receive KFC news and offers by email or SMS.
+              This is optional.
+            </label>
+          </div>
         </div>
-        </div>
-       
       </div>
-    </div>
+    </section>
   );
 };
-function TextInput({ type = "text", label }) {
-  const [value, setValue] = useState("");
 
-  function handleChange(e) {
-    setValue(e.target.value);
-  }
-
+function TextInput({
+  id,
+  name,
+  type = "text",
+  label,
+  value,
+  onChange,
+  required = false,
+}) {
   return (
     <div className="input-container">
-      <input type={type} value={value} onChange={handleChange} />
-      <label className={value && "filled"}>{label}</label>
+      <input
+        id={id}
+        name={name}
+        type={type}
+        value={value}
+        onChange={onChange}
+        required={required}
+        autoComplete={
+          name === "firstName" ? "given-name" :
+          name === "lastName" ? "family-name" :
+          name === "email" ? "email" :
+          name === "phone" ? "tel" : "off"
+        }
+      />
+      <label className={value ? "filled" : ""} htmlFor={id}>
+        {label}
+      </label>
     </div>
   );
 }

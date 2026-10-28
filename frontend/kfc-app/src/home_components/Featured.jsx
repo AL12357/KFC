@@ -1,4 +1,5 @@
 import React from "react";
+import { formatUGX } from "../utils/currency";
 import Slider from "react-slick";
 import styles from "./HomeSlider.module.css";
 import SliderData from "../SliderData.json";
@@ -75,7 +76,7 @@ export default class Featured extends React.Component {
                 className={styles.itemImg}
               />
               <p className={styles.itemTitle}>{item.title}</p>
-              <p className={styles.itemPrice}>{item.price}</p>
+              <p className={styles.itemPrice}>{formatUGX(item.price)}</p>
               <p className={styles.itemDesc}>{item.desc}</p>
             </div>
           ))}

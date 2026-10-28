@@ -1,7 +1,7 @@
 
 import { addrolls } from '../redux/action';
-import { getdata } from "../utils/getdata"
-import React, { useEffect } from 'react'
+import { getMenuItemsByType } from "../utils/menuCatalog"
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styles from "./item.module.css"
 import Item from './Item';
@@ -9,14 +9,13 @@ import Item from './Item';
 const Rolls = () => {
     const dispatch = useDispatch();
     const rolls= useSelector((state)=>state.rolls)
-    useEffect(()=>{
+    const fetchData = useCallback(async () => {
+        const payload = await getMenuItemsByType("rolls");
+        dispatch(addrolls(payload));
+    }, [dispatch]);
+    useEffect(() => {
         fetchData();
-    },[])
-    
-     const fetchData= async()=>{
-        let payload= await getdata("http://localhost:8080/api/product/menu?type=rolls");
-         dispatch(addrolls(payload));
-     }
+    }, [fetchData]);
   return (
     <div id="rolls">
       <h1>CHICKEN ROLLS</h1>

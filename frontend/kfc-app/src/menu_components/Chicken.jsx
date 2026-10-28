@@ -1,20 +1,20 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { addchicken } from '../redux/action';
-import { getdata } from "../utils/getdata"
+import { getMenuItemsByType } from "../utils/menuCatalog"
 import Item from './Item';
 import styles from "./item.module.css"
 const Chicken = () => {
     const dispatch = useDispatch();
     const chicken= useSelector((state)=>state.chicken);
-    useEffect(()=>{
+    const fetchData = useCallback(async () => {
+        const payload = await getMenuItemsByType("chicken");
+        dispatch(addchicken(payload));
+    }, [dispatch]);
+    useEffect(() => {
         fetchData();
-    },[])
-     const fetchData= async()=>{
-        let payload= await getdata("http://localhost:8080/api/product/menu?type=chicken");
-         dispatch(addchicken(payload));
-     }
-  
+    }, [fetchData]);
+
   return (
     <div id="chicken" >
       <h1>CHICKEN BUCKETS</h1>

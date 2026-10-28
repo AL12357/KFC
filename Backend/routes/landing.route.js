@@ -3,17 +3,32 @@ const { favorites, featured, quickbites } = require("../model/LandingSchema");
 const landingRouter = Router();
 
 landingRouter.get("/favorites", async (req, res) => {
-  const fav = await favorites.find();
-  res.status(200).send(fav);
+  try {
+    const fav = await favorites.find();
+    return res.status(200).json(fav);
+  } catch (error) {
+    console.error("Error fetching favorites:", error);
+    return res.status(500).json({ message: "Failed to fetch favorites" });
+  }
 });
 
 landingRouter.get("/featured", async (req, res) => {
-  const feature = await featured.find();
-  res.status(200).send(feature);
+  try {
+    const feature = await featured.find();
+    return res.status(200).json(feature);
+  } catch (error) {
+    console.error("Error fetching featured items:", error);
+    return res.status(500).json({ message: "Failed to fetch featured items" });
+  }
 });
 
 landingRouter.get("/quickbites", async (req, res) => {
-  const quickbite = await quickbites.find();
-  res.status(200).send(quickbite);
+  try {
+    const quickbite = await quickbites.find();
+    return res.status(200).json(quickbite);
+  } catch (error) {
+    console.error("Error fetching quick bites:", error);
+    return res.status(500).json({ message: "Failed to fetch quick bites" });
+  }
 });
 module.exports = landingRouter;

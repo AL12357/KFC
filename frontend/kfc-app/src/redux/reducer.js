@@ -11,7 +11,17 @@ const initialState={
     stayhome:[],
     snacks:[],
     beverages:[],
-    cart:[]
+    cart: loadSavedCart()
+}
+
+function loadSavedCart() {
+  try {
+    const savedCart = JSON.parse(localStorage.getItem("kfc-cart") || "[]");
+    return Array.isArray(savedCart) ? savedCart : [];
+  } catch (error) {
+    console.error("Unable to read the saved cart:", error);
+    return [];
+  }
 }
 
 export const reducer= (state=initialState,{type,payload})=>{
@@ -63,22 +73,26 @@ switch(type){
         }
       }
       case ADDCART:{
+        const existingItem = state.cart.find((item) => item.id === payload.id);
+        const cart = existingItem
+          ? state.cart.map((item) =>
+              item.id === payload.id
+                ? { ...item, qty: item.qty + payload.qty }
+                : item
+            )
+          : [...state.cart, payload];
         return{
-          ...state,cart:[...state.cart,payload]
+          ...state,cart
         }
       }
       case CARTCOUNT:{
-        for(let i=0;i<state.cart.length;i++){
-          if(state.cart[i].id===payload.id){
-            state.cart[i].qty=payload.qty;
-            if(state.cart[i].qty==0){
-              state.cart.splice(i,1);
-            }
-          }
-        }
-        let cart=[...state.cart]
+        const cart = state.cart
+          .map((item) =>
+            item.id === payload.id ? { ...item, qty: payload.qty } : item
+          )
+          .filter((item) => item.qty > 0);
         return{
-          ...state,cart:cart
+          ...state,cart
         }
       }
       case GETCART:{
@@ -87,14 +101,9 @@ switch(type){
           }
       }
       case DELETECART:{
-        for(let i=0;i<state.cart.length;i++){
-          if(state.cart[i].id===payload){
-            state.cart.splice(i,1);
-          }
-        }
-        let cart=[...state.cart]
+        const cart = state.cart.filter((item) => item.id !== payload);
           return{
-            ...state,cart:cart
+            ...state,cart
           }
       }
     default :return state;

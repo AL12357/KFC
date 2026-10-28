@@ -1,7 +1,7 @@
 
 import { addbiryani } from '../redux/action';
-import { getdata } from "../utils/getdata"
-import React, { useEffect } from 'react'
+import { getMenuItemsByType } from "../utils/menuCatalog"
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styles from "./item.module.css"
 import Item from './Item';
@@ -9,14 +9,13 @@ import Item from './Item';
 const Biryani = () => {
     const dispatch = useDispatch();
     const biryani = useSelector((state)=>state.biryani)
-    useEffect(()=>{
+    const fetchData = useCallback(async () => {
+        const payload = await getMenuItemsByType("biryani");
+        dispatch(addbiryani(payload));
+    }, [dispatch]);
+    useEffect(() => {
         fetchData();
-    },[])
-    
-     const fetchData= async()=>{
-        let payload= await getdata("http://localhost:8080/api/product/menu?type=biryani");
-         dispatch(addbiryani(payload));
-     }
+    }, [fetchData]);
 
 
   return (

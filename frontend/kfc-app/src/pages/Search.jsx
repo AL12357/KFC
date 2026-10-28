@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 import Bottom from '../cart_components/Bottom';
 import Item from '../menu_components/Item';
 import styles from "./Menu.module.css";
+import { apiUrl } from '../utils/api';
 
 
 const Search = () => {
@@ -17,7 +18,7 @@ useEffect(() => {
     const controller = new AbortController();
     setError("");
 
-    axios.get("http://localhost:8080/api/searchapi/item/", {
+    axios.get(apiUrl("api/searchapi/item"), {
         params: { search: val },
         signal: controller.signal,
     })

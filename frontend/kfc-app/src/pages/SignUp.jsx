@@ -2,6 +2,7 @@ import React, { useState } from "react";
 // import Header from "../AuthHeader_Component/AuthHeader";
 import "./signup.css";
 import { Link, useNavigate } from "react-router-dom";
+import { apiUrl } from "../utils/api";
 // import { ToastContainer, toast } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
 
@@ -31,7 +32,7 @@ const SignUp = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:8080/Auth/signup", {
+      const response = await fetch(apiUrl("Auth/signup"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

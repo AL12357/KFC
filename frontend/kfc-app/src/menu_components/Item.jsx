@@ -1,74 +1,80 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styles from "./item.module.css"
-import axios from 'axios'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addcart, addcartcount } from '../redux/action';
 import { useNavigate } from 'react-router-dom';
+import MenuImage from './MenuImage';
+import { formatUGX, isPriceAvailable } from '../utils/currency';
+import { BsCart3, BsCartPlus } from 'react-icons/bs';
 
 const Item = ({_id,image,price,title,desc}) => {
-    const [count,setCount]= useState(0)
+    const hasPrice = isPriceAvailable(price);
     const navigate= useNavigate();
     const dispatch = useDispatch();
+    const count = useSelector((state) =>
+      state.cart.find((item) => item.id === String(_id))?.qty || 0
+    );
+    const item = { id: String(_id), image, price, title, desc, qty: 1 };
+
+    const updateQuantity = (qty) => {
+      if (qty === 1 && count === 0) {
+        dispatch(addcart(item));
+      } else {
+        dispatch(addcartcount({ ...item, qty: count + qty }));
+      }
+    };
+
   return (
     <div className={styles.innerbox} >
-      <img onClick={()=>{
+      <MenuImage onClick={()=>{
         navigate(`/menu/${_id}`)
-      }} src={image} alt="food" />
+      }} image={image} title={title} alt={title} />
       <div>
         <h3 className={styles.title} >{title}</h3>
-        <p><span style={{fontSize:"11px",background:"red",color:"red",borderRadius:"50%"}} >12</span> Non veg</p>
-        <h3>{price}</h3>       
+        <h3>{formatUGX(price)}</h3>
         <p className={styles.desc} >{desc}</p>
         <div className={styles.cartbutton}
-        
+
         >
-          <h3> {!count?(<p className={styles.addto}
-            onClick={ ()=>{
-            setCount(count+1)
-            const el={
-                id:_id,image,price,title,desc,qty:count+1
-            }
-            axios.post("http://localhost:8080/api/productcart/cart",el)
-            .then(()=>dispatch(addcart(el)))
-            
-            }}> Add to cart</p>):(<div>
-
-              
-            <button
-            className={styles.minus}
-            onClick={()=>{setCount(count-1)
-             const el={
-                id:_id,image,price,title,desc,qty:count-1
-            }
-            axios.put(`http://localhost:8080/api/productcart/cart/${_id}`,el)
-            .then(()=>{
-              dispatch(addcartcount(el));
-            })
-            } }>&#8211;</button>
-
-            <span>{count}</span>
-
-
-            <button 
-            className={styles.plus}
-            onClick={()=>{setCount(count+1)
-            const el={
-                id:_id,image,price,title,desc,qty:count+1
-            }
-            axios.put(`http://localhost:8080/api/productcart/cart/${_id}`,el)
-            .then(()=>{
-              dispatch(addcartcount(el));
-            })
-            }} >&#43;</button>
-
-
-           </div>)} </h3>
-          <img 
-          style={{cursor:"pointer"}}
-          onClick={()=>{
-            navigate("/cart")
-          }} src="https://online.kfc.co.in/static/media/Icon_Add_to_Cart.58b87a9b.svg"
-          alt="Cart"/>
+          <h3>
+            {!count ? (
+              <button
+                type="button"
+                className={styles.addto}
+                onClick={() => updateQuantity(1)}
+              >
+                {hasPrice ? "Add to cart" : "Price unavailable"}
+                <BsCartPlus aria-hidden="true" />
+              </button>
+            ) : (
+              <div>
+                <button
+                  className={styles.minus}
+                  aria-label={`Remove one ${title}`}
+                  onClick={() => updateQuantity(-1)}
+                >
+                  &#8211;
+                </button>
+                <span>{count}</span>
+                <button
+                  className={styles.plus}
+                  disabled={!hasPrice}
+                  aria-label={`Add one ${title}`}
+                  onClick={() => updateQuantity(1)}
+                >
+                  &#43;
+                </button>
+              </div>
+            )}
+          </h3>
+          <button
+            type="button"
+            className={styles.cartIconButton}
+            aria-label="View cart"
+            onClick={() => navigate("/cart")}
+          >
+            <BsCart3 aria-hidden="true" />
+          </button>
        </div>
       </div>
     </div>

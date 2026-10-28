@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import { useSelector } from "react-redux"
 import styled from 'styled-components'
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { FaBeer } from 'react-icons/fa';
@@ -108,6 +109,42 @@ p {
 .StartButton:hover{
   background:#c12c48;
 }
+.cartLink{
+  display:inline-flex;
+  position:relative;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-width:70px;
+  min-height:38px;
+  padding:0 10px;
+  color:#202124;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:700;
+}
+.cartLink img{
+  display:block;
+  width:26px;
+  height:26px;
+  padding:0;
+}
+.cartCount{
+  position:absolute;
+  top:-2px;
+  left:28px;
+  display:flex;
+  min-width:18px;
+  height:18px;
+  align-items:center;
+  justify-content:center;
+  padding:0 3px;
+  border-radius:12px;
+  background:#e4002b;
+  color:#fff;
+  font-size:11px;
+  line-height:18px;
+}
 ${'' /* 2nd navbar for finding location */}
 .secondFindNav{
   background:rgb(32,33,36);
@@ -159,8 +196,8 @@ const SmallNavMenuForNavbar = styled.div`
   overflow:scroll;
 }
 .MenuPartDiv{
-  background-color: #f8f7f5; 
-  color: #000000; 
+  background-color: #f8f7f5;
+  color: #000000;
   height: 115px;
   width:95vw;
   display:flex;
@@ -177,11 +214,11 @@ const SmallNavMenuForNavbar = styled.div`
   float:right;
   right:10px;
   padding-bottom:25px;
-  
+
 }
 .MenuPartDivImg{
-  background-color: #f8f7f5; 
-  color: #000000; 
+  background-color: #f8f7f5;
+  color: #000000;
   width:100vw;
   margin:auto;
   align-items:center;
@@ -223,7 +260,9 @@ const SmallNavMenuForNavbar = styled.div`
 export const FixedNavbar = () => {
 
   const [visibleMenu, setVisibleMenu] = useState(false)
- 
+  const cartItems = useSelector((state) => state.cart)
+  const cartCount = cartItems.reduce((total, item) => total + (Number(item.qty) || 0), 0)
+
   const handleMenuOptions = () => {
     setVisibleMenu(true)
   }
@@ -250,7 +289,15 @@ export const FixedNavbar = () => {
                 <div className="StartButton" ><Link to={"/menu"} style={{ color: "white", textDecoration: "none" }} >Start Order</Link></div>
                 <div>
                   <Link to={"/signin"}><img height={"30rem"} style={{ padding: "0.3vw 1vw" }} src={signin} alt="" /></Link>
-                  <Link to={"/cart"}><img height={"30rem"} style={{ padding: "0.3vw 1vw" }} src={cart} alt="" /></Link>
+                  <Link
+                    to="/cart"
+                    className="cartLink"
+                    aria-label={`Cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`}
+                  >
+                    <img src={cart} alt="" />
+                    <span>Cart</span>
+                    {cartCount > 0 && <span className="cartCount">{cartCount}</span>}
+                  </Link>
                 </div>
               </li>
             </ul>
@@ -265,7 +312,15 @@ export const FixedNavbar = () => {
             <div className="toggleNavbar1">
               <Link to={"#"}><img height={"15rem"} style={{ padding: "0.3vw 1vw" }} src={menuNav2} onClick={handleMenuOptions} alt="" /></Link>
               <Link to={"/"}><img height={"21rem"} style={{ padding: "0.3vw 1vw" }} src={KFClogo} alt="" /></Link>
-              <Link to={"/cart"}><img height={"20rem"} style={{ padding: "0.3vw 1vw" }} src={cart} alt="" /></Link>
+              <Link
+                to="/cart"
+                className="cartLink"
+                aria-label={`Cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`}
+              >
+                <img src={cart} alt="" />
+                <span>Cart</span>
+                {cartCount > 0 && <span className="cartCount">{cartCount}</span>}
+              </Link>
             </div>
             <div className="secondFindNav">
               <Link to={"/find"} className="secondFindNav1" style={{ fontWeight: "500", alignItems: "center" }}>
@@ -276,8 +331,8 @@ export const FixedNavbar = () => {
           </div>
         </div>
       </MainFixPartOfNavbar>
-      
-      {visibleMenu && <div className="popupMenuOfNavVisibility" >      
+
+      {visibleMenu && <div className="popupMenuOfNavVisibility" >
         <SmallNavMenuForNavbar>
           <div className="popupMenuOfNav">
             <div>

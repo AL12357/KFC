@@ -1,17 +1,20 @@
-import axios from "axios";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import Item from "../menu_components/Item";
 import styles from "./cart.module.css";
+import { getRecommendedMenuItems } from "../utils/menuCatalog";
 const Bottom = () => {
   let [recom, setrecom] = useState([]);
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/searchapi/item/?search=meal")
-      .then(({ data }) => {
-        setrecom(data);
-      });
+    let active = true;
+    getRecommendedMenuItems().then((items) => {
+      if (active) setrecom(items);
+    });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (

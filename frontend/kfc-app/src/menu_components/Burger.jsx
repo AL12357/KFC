@@ -1,21 +1,20 @@
 
 import { addburger } from '../redux/action';
-import { getdata } from "../utils/getdata"
-import React, { useEffect } from 'react'
+import { getMenuItemsByType } from "../utils/menuCatalog"
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styles from "./item.module.css"
 import Item from './Item';
 const Burger = () => {
     const dispatch = useDispatch();
     const burger= useSelector((state)=>state.burger);
-    useEffect(()=>{
+    const fetchData = useCallback(async () => {
+        const payload = await getMenuItemsByType("burger");
+        dispatch(addburger(payload));
+    }, [dispatch]);
+    useEffect(() => {
         fetchData();
-    },[])
-    
-     const fetchData= async()=>{
-        let payload= await getdata("http://localhost:8080/api/product/menu?type=burger");
-         dispatch(addburger(payload));
-     }
+    }, [fetchData]);
 
   return (
   <div id="burger">

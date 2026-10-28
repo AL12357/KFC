@@ -1,22 +1,20 @@
-import React from 'react'
-import { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch ,useSelector} from 'react-redux'
 import { addbeverages } from '../redux/action';
-import { getdata } from '../utils/getdata';
+import { getMenuItemsByType } from "../utils/menuCatalog";
 import styles from "./item.module.css"
 import Item from './Item';
 
 const Beverages = () => {
  const dispatch = useDispatch();
- const beverage= useSelector((state)=>state.beverages); 
-useEffect(()=>{
-    fetchData();
-},[])
-
- const fetchData= async()=>{
-    let payload= await getdata("http://localhost:8080/api/product/menu?type=beverages");
-     dispatch(addbeverages(payload));
- }
+ const beverage= useSelector((state)=>state.beverages);
+const fetchData = useCallback(async () => {
+   const payload = await getMenuItemsByType("beverages");
+   dispatch(addbeverages(payload));
+}, [dispatch]);
+useEffect(() => {
+   fetchData();
+}, [fetchData]);
 
   return (
   <div id="beverage" >

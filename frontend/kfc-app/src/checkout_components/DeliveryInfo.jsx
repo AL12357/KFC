@@ -1,34 +1,99 @@
 import React from "react";
 import "./DeliverInfo.css";
 
-const DeliveryInfo = () => {
+const DeliveryInfo = ({
+  orderType = "delivery",
+  deliveryInfo,
+  onChange,
+}) => {
+  if (orderType === "pickup") {
+    return (
+      <section className="delivery_info_container">
+        <h3>RESTAURANT PICKUP</h3>
+
+        <p>
+          Enter your preferred KFC Uganda restaurant or branch.
+          Live branch availability is not checked in this demonstration.
+        </p>
+
+        <label htmlFor="pickup-restaurant">
+          Restaurant or branch name*
+        </label>
+        <input
+          id="pickup-restaurant"
+          name="pickupRestaurant"
+          className="input_style"
+          type="text"
+          placeholder="Enter your preferred restaurant"
+          value={deliveryInfo.pickupRestaurant}
+          onChange={onChange}
+          required
+        />
+
+        <p>
+          Please confirm the collection location with the restaurant before travelling.
+        </p>
+      </section>
+    );
+  }
+
   return (
-    <div className="delivery_info_container">
-      <div style={{ display: "flex" }}>
-        <div style={{ width: "40%" }}>
-          <h3>DELIVERY INFO</h3>
-        </div>
-        <div>
-          <div style={{ display: "flex" }}>
-            <img
-              src="https://online.kfc.co.in/static/media/LocationOn.f57c1dfd.svg"
-              alt=""
-            />
-            <p style={{ marginLeft: "20px" }}>KFC Delhi - CP1</p>
-          </div>
-          <p style={{ marginLeft: "20px", marginTop: "-10px"}}>New Delhi, Delhi 110001, India</p>
-          <p>Address 2</p>
-          <input className="input_style"
-            type="text"
-            placeholder="Appartment, suite, unit, building, floor"
-          />
-          <div style={{display: "flex"}}>
-            <img src="https://online.kfc.co.in/static/media/WatchLater.3ca73ea2.svg" alt="" />
-            <h4 style={{marginLeft: "20px"}}>ASAP</h4>
-          </div>
-        </div>
-      </div>
-    </div>
+    <section className="delivery_info_container">
+      <h3>DELIVERY ADDRESS</h3>
+
+      <p>
+        Enter the address where you would like your order delivered in Uganda.
+      </p>
+
+      <label htmlFor="delivery-address">Street, building or area*</label>
+      <input
+        id="delivery-address"
+        name="address"
+        className="input_style"
+        type="text"
+        placeholder="Street, building, village or area"
+        value={deliveryInfo.address}
+        onChange={onChange}
+        required
+      />
+
+      <label htmlFor="delivery-town">Town or city*</label>
+      <input
+        id="delivery-town"
+        name="town"
+        className="input_style"
+        type="text"
+        placeholder="Town or city"
+        value={deliveryInfo.town}
+        onChange={onChange}
+        required
+      />
+
+      <label htmlFor="delivery-district">District*</label>
+      <input
+        id="delivery-district"
+        name="district"
+        className="input_style"
+        type="text"
+        placeholder="District"
+        value={deliveryInfo.district}
+        onChange={onChange}
+        required
+      />
+
+      <label htmlFor="delivery-instructions">
+        Additional address details (optional)
+      </label>
+      <input
+        id="delivery-instructions"
+        name="instructions"
+        className="input_style"
+        type="text"
+        placeholder="Nearby landmark, apartment or directions"
+        value={deliveryInfo.instructions}
+        onChange={onChange}
+      />
+    </section>
   );
 };
 

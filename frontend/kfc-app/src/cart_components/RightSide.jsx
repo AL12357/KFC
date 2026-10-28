@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { apiUrl } from "../utils/api";
 import "../pages/Cart.css";
+import { formatUGX, parsePrice } from "../utils/currency";
 
-const RightSide = () => {
+const RightSide = ({ customerInfo, deliveryInfo, orderType }) => {
   const [input, setInput] = useState(false);
   const [stotal, setstotal] = useState(0);
   const [paymentError, setPaymentError] = useState("");
@@ -19,14 +21,19 @@ const RightSide = () => {
 
   const path = location.pathname;
 
-  // Calculate subtotal
-  useEffect(() => {
-    const total = cart.reduce((acc, el) => {
-      const price = Number(
-        String(el.price).replace(/[^\d.]/g, "")
-      );
+  // Calculate subtotal only from valid product prices.
+  const hasUnavailablePrices = cart.some(
+    (item) => parsePrice(item.price) === null
+  );
 
-      const qty = Number(el.qty) || 0;
+  useEffect(() => {
+    const total = cart.reduce((acc, item) => {
+      const price = parsePrice(item.price);
+      const qty = Number(item.qty) || 0;
+
+      if (price === null || qty < 0) {
+        return acc;
+      }
 
       return acc + price * qty;
     }, 0);
@@ -34,19 +41,15 @@ const RightSide = () => {
     setstotal(Math.round(total));
   }, [cart]);
 
-  // GST = 5%
-  const gst = Math.round(stotal * 0.05);
+  // No unverified tax or handling charges in this demo.
+  const gst = 0;
+  const restaurantHandling = 0;
 
-  // Restaurant handling charge
-  const restaurantHandling = 20;
+  // Optional donation
+  const hopeAmount = input ? 500 : 0;
 
-  // Donation
-  const hopeAmount = input ? 5 : 0;
-
-  // Final amount
-  const finalTotal =
-    stotal + gst + restaurantHandling + hopeAmount;
-
+  // Subtotal plus optional donation
+  const finalTotal = stotal + hopeAmount;
   // Donation checkbox
   const handleInput = () => {
     setInput(!input);
@@ -55,17 +58,74 @@ const RightSide = () => {
   const handleDemoPayment = async () => {
     setPaymentError("");
     setPaymentMessage("");
+
+    if (cart.length === 0) {
+      setPaymentError("Your cart is empty.");
+      return;
+    }
+
+    if (hasUnavailablePrices) {
+      setPaymentError("Please remove items with unavailable prices before checkout.");
+      return;
+    }
+
+    const requiredContactFields = [
+      customerInfo?.firstName,
+      customerInfo?.lastName,
+      customerInfo?.email,
+      customerInfo?.phone,
+    ];
+
+    if (requiredContactFields.some((value) => !String(value || "").trim())) {
+      setPaymentError("Please complete your first name, last name, email and phone number.");
+      return;
+    }
+
+    const email = customerInfo.email.trim();
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setPaymentError("Please enter a valid email address.");
+      return;
+    }
+
+    const phoneDigits = customerInfo.phone.replace(/\D/g, "");
+
+    if (phoneDigits.length < 9 || phoneDigits.length > 15) {
+      setPaymentError("Please enter a valid phone number.");
+      return;
+    }
+
+    if (orderType === "delivery") {
+      const requiredAddressFields = [
+        deliveryInfo?.address,
+        deliveryInfo?.town,
+        deliveryInfo?.district,
+      ];
+
+      if (requiredAddressFields.some((value) => !String(value || "").trim())) {
+        setPaymentError("Please complete your delivery address, town or city, and district.");
+        return;
+      }
+    } else if (!String(deliveryInfo?.pickupRestaurant || "").trim()) {
+      setPaymentError("Please enter your preferred restaurant or branch for pickup.");
+      return;
+    }
     setIsPaying(true);
 
     try {
       const { data } = await axios.post(apiUrl("api/payment/demo"), {
         amount: finalTotal,
       });
-      if (data.status !== "success" || data.demo !== true) {
+      if (
+        data.status !== "success" ||
+        data.demo !== true ||
+        Number(data.amount) !== finalTotal ||
+        !data.demoPaymentId
+      ) {
         throw new Error("Unable to confirm the payment.");
       }
       setPaymentMessage(
-        `Payment successful. Amount: ₹${data.amount}. Reference: ${data.demoPaymentId}.`
+        `Demo payment successful. Amount: ${formatUGX(data.amount)}. Reference: ${data.demoPaymentId}.`
       );
     } catch (error) {
       setPaymentError(
@@ -95,9 +155,9 @@ const RightSide = () => {
           Apply Offers & Deals
         </span>
 
-        <button className="viewAll_button">
-          View All
-        </button>
+        <Link className="viewAll_button" to="/menu">
+          View Menu
+        </Link>
       </div>
 
       {/* Subtotal */}
@@ -109,7 +169,7 @@ const RightSide = () => {
         }}
       >
         <div>SubTotal</div>
-        <div>₹{stotal}</div>
+        <div>{formatUGX(stotal)}</div>
       </div>
 
       {/* GST */}
@@ -120,8 +180,8 @@ const RightSide = () => {
           marginTop: "10px",
         }}
       >
-        <div>GST (5%)</div>
-        <div>₹{gst}</div>
+        <div>Tax (not applied in this demo)</div>
+        <div>{formatUGX(gst)}</div>
       </div>
 
       {/* Restaurant Handling */}
@@ -137,10 +197,10 @@ const RightSide = () => {
             marginRight: "20px",
           }}
         >
-          Restaurant Handling (Incl. Taxes)
+          Handling fee (not applied)
         </div>
 
-        <div>₹{restaurantHandling}</div>
+        <div>{formatUGX(restaurantHandling)}</div>
       </div>
 
       {/* Add Hope */}
@@ -153,7 +213,7 @@ const RightSide = () => {
           }}
         >
           <div>Add Hope</div>
-          <div>₹5</div>
+          <div>{formatUGX(500)}</div>
         </div>
       )}
 
@@ -180,7 +240,7 @@ const RightSide = () => {
             marginTop: "-17px",
           }}
         >
-          <p>Donate ₹5.00 Tick to Add Hope.</p>
+          <p>Donate UGX 500 to Add Hope.</p>
 
           <p>
             Our goal is to feed 20 million people by 2022.
@@ -207,6 +267,7 @@ const RightSide = () => {
       {path === "/cart" ? (
         <button
           onClick={() => navigate("/checkout")}
+          disabled={cart.length === 0 || hasUnavailablePrices}
           className="redButton"
         >
           <div
@@ -217,7 +278,7 @@ const RightSide = () => {
           >
             <p>Checkout</p>
 
-            <p>₹{finalTotal}</p>
+            <p>{formatUGX(finalTotal)}</p>
           </div>
         </button>
       ) : (
@@ -227,7 +288,7 @@ const RightSide = () => {
           </p>
           <button
             onClick={handleDemoPayment}
-            disabled={isPaying || cart.length === 0}
+            disabled={isPaying || cart.length === 0 || hasUnavailablePrices}
             className="redButton"
           >
             <div
@@ -237,7 +298,7 @@ const RightSide = () => {
               }}
             >
                 <p>{isPaying ? "Processing..." : "Pay Now"}</p>
-              <p>₹{finalTotal}</p>
+              <p>{formatUGX(finalTotal)}</p>
             </div>
           </button>
         </>

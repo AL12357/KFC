@@ -1,5 +1,5 @@
 const express = require("express");
-require("dotenv").config({ path: "./.env" });
+require("dotenv").config({ path: require("path").join(__dirname, ".env") });
 if (!process.env.SECRET_KEY) {
   throw new Error("Missing SECRET_KEY in Backend/.env");
 }
@@ -15,11 +15,16 @@ const cors = require("cors");
 const helmet = require("helmet");
 
 const server = express();
+const PORT = process.env.PORT || 8080;
+const allowedOrigins = (process.env.FRONTEND_URLS || "http://localhost:3000")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 server.use(express.urlencoded({ extended: true }));
 server.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
@@ -30,6 +35,10 @@ server.get("/", (req, res) => {
   res.send(`KFC API Server started on localhost:${PORT}`);
 });
 
+server.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 server.use("/Auth", userAuthRouter);
 server.use("/api/home", landingRouter);
 server.use("/api/searchapi", searchRouter);
@@ -37,10 +46,16 @@ server.use("/api/product", menuRouter);
 server.use("/api/productcart", cartRouter);
 server.use("/api/payment", paymentRouter);
 
-const PORT = process.env.PORT || 8080;
-
-server.listen(PORT, async () => {
+async function startServer() {
   await connection;
-  console.log("Connected to Database");
-  console.log(`🌎 started on http://localhost:${PORT}/`);
+
+  server.listen(PORT, () => {
+    console.log("Connected to Database");
+    console.log(`KFC API started on http://localhost:${PORT}/`);
+  });
+}
+
+startServer().catch((error) => {
+  console.error("Unable to start the API server:", error.message);
+  process.exitCode = 1;
 });

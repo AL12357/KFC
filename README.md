@@ -1,19 +1,42 @@
-## KFC (Kentucky Fried Chicken) Clone 
+## KFC (Kentucky Fried Chicken) Clone
 ---
 <p>
 This was a collaborative construct week project at Masai School.
 Goal behind the project was to create a full stack clone of the KFC website as close as possible to the original one with all the major functionalities of this website, such as  Authentication, Landing Page & Food Gallery, Menu, User Cart, Checkout, Payment Gateway.
-This project was built by a team of 6 developers in 5 Days. 
+This project was built by a team of 6 developers in 5 Days.
 </p>
+
+### Run locally
+
+1. Install the frontend dependencies and start the React app from the project root:
+
+   ```powershell
+   npm install --prefix frontend/kfc-app
+   npm run dev --prefix frontend
+   ```
+
+   The frontend opens at `http://localhost:3000`.
+
+2. Copy `Backend/.env.example` to `Backend/.env` and set `DATABASE` to a reachable MongoDB connection string and `SECRET_KEY` to a long, unique random value.
+
+3. In a separate terminal, install the backend dependencies and start the API:
+
+   ```powershell
+   cd Backend
+   npm install
+   npm run dev
+   ```
+
+   The API runs at `http://localhost:8080`; set `FRONTEND_URLS` in `Backend/.env` to the frontend origin if it differs from the default.
 
 * [Click Here](https://clone-kfc.netlify.app/ "KFC Clone") to view the deployed website.
 
 <p>
-KFC (Kentucky Fried Chicken) is an American fast food restaurant chain headquartered in Louisville, Kentucky, that specializes in fried chicken. 
+KFC (Kentucky Fried Chicken) is an American fast food restaurant chain headquartered in Louisville, Kentucky, that specializes in fried chicken.
 It is the world's second-largest restaurant chain after McDonald's.
-KFC was founded by Colonel Harland Sanders, an entrepreneur who began selling fried chicken from his roadside restaurant in Corbin, Kentucky. 
+KFC was founded by Colonel Harland Sanders, an entrepreneur who began selling fried chicken from his roadside restaurant in Corbin, Kentucky.
 By branding himself as "Colonel Sanders", Harland became a prominent figure of American cultural history and his image remains widely used in KFC advertising to this day.
-KFC was one of the first American fast-food chains to expand internationally, opening outlets in Canada, the United Kingdom, Mexico and Jamaica by the mid-1960s. 
+KFC was one of the first American fast-food chains to expand internationally, opening outlets in Canada, the United Kingdom, Mexico and Jamaica by the mid-1960s.
 </p>
 
 ### Credits
@@ -30,7 +53,7 @@ ___
 * CSS 3
 * JavaScript
 * React JS
-* Redux JS 
+* Redux JS
 * Node JS
 * Express JS
 * MongoDB
@@ -77,9 +100,8 @@ ___
         <li><a href="https://github.com/hlv-kakashi">Anupam Kumar</a></li>
         <li><a href="https://github.com/arpitchaudhary03">Arpit Chaudhary</a></li>
   </ul>
-  
+
  ### Contributing
  ___
  Contributions are always welcome!<br><br>
  You can contribute with us to make this more functionable.
-   
